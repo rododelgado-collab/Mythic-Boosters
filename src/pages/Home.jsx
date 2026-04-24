@@ -49,8 +49,12 @@ export function Home() {
           </div>
 
           <div className="flex justify-center md:justify-end">
-            <Pack size="lg" set="ARCANA" price={4990} className="md:hidden" />
-            <Pack size="xl" set="ARCANA" price={4990} className="hidden md:block" />
+            <div className="md:hidden">
+              <Pack size="lg" set="ARCANA" price={4990} />
+            </div>
+            <div className="hidden md:flex">
+              <Pack size="xl" set="ARCANA" price={4990} />
+            </div>
           </div>
         </div>
       </section>

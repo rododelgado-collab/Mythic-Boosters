@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Sparkles, X, Check, Package, Banknote, ZoomIn } from 'lucide-react'
 import { Card } from '../components/Card'
@@ -19,6 +19,14 @@ export function Apertura() {
   const [revealedCount, setRevealedCount] = useState(0)
   const [selectedCards, setSelectedCards] = useState([])
   const [zoomedCard, setZoomedCard] = useState(null)
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
+  const actionBarRef = useRef(null)
+
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
 
   useEffect(() => {
     if (!pack) navigate('/perfil')
@@ -163,8 +171,9 @@ export function Apertura() {
             </div>
 
             {allRevealed && (
-              <div className="card p-4 bg-abyss flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
+              <div ref={actionBarRef} className="card p-3 md:p-4 bg-abyss flex flex-col gap-3">
+                {/* Fila 1: selección + contador */}
+                <div className="flex items-center justify-between">
                   <button
                     onClick={toggleAll}
                     className="font-mono text-[11px] tracking-wider uppercase text-gold-300 hover:text-gold-200 transition-colors"
@@ -172,34 +181,33 @@ export function Apertura() {
                     {allSelected ? 'Deseleccionar todas' : 'Seleccionar todas'}
                   </button>
                   {selectedCards.length > 0 && (
-                    <span className="text-sm text-slate-500">
+                    <span className="text-xs text-slate-500">
                       {selectedCards.length} carta{selectedCards.length > 1 ? 's' : ''}
                       {' · '}
                       <span className="text-gold-300">${totalValue.toLocaleString('es-CL')}</span>
                     </span>
                   )}
                 </div>
-                <div className="flex gap-2 w-full md:w-auto">
-                  <Button variant="ghost" onClick={handleGuardar} className="flex-1 md:flex-none">
+                {/* Fila 2: botones */}
+                <div className="grid grid-cols-2 md:flex gap-2">
+                  <Button variant="ghost" onClick={handleGuardar} className="col-span-2 md:col-span-1">
                     Guardar para después
                   </Button>
                   <Button
                     variant="secondary"
-                    icon={<Package size={16} />}
+                    icon={<Package size={14} />}
                     onClick={handleCanjear}
                     disabled={selectedCards.length === 0}
-                    className="flex-1 md:flex-none"
                   >
                     Canjear físico
                   </Button>
                   <Button
                     variant="primary"
-                    icon={<Banknote size={16} />}
+                    icon={<Banknote size={14} />}
                     onClick={handleVender}
                     disabled={selectedCards.length === 0}
-                    className="flex-1 md:flex-none"
                   >
-                    Vender por crédito
+                    Vender crédito
                   </Button>
                 </div>
               </div>
@@ -207,10 +215,11 @@ export function Apertura() {
           </div>
 
           {/* Grid de cartas */}
-          <div className="flex-1 grid grid-cols-3 md:grid-cols-5 gap-3 md:gap-4 place-items-center">
+          <div className="flex-1 grid grid-cols-3 md:grid-cols-5 gap-2 md:gap-4 place-items-center">
             {cards.map((card, index) => {
               const isRevealed = index < revealedCount
               const isSelected = selectedCards.includes(card.instanceId)
+              const cardSize = isMobile ? 'xs' : 'sm'
               return (
                 <div
                   key={card.instanceId}
@@ -219,14 +228,14 @@ export function Apertura() {
                 >
                   {/* Nombre + lupa (solo cuando está revelada) */}
                   {isRevealed && (
-                    <div className="flex items-center gap-1 mb-1.5 w-[90px] md:w-[140px] justify-center">
-                      <span className="font-display text-[10px] text-slate-300 truncate">{card.name}</span>
+                    <div className="flex items-center gap-0.5 mb-1 w-[90px] justify-center">
+                      <span className="font-display text-[9px] text-slate-300 truncate">{card.name}</span>
                       <button
                         onClick={() => setZoomedCard(card)}
                         className="flex-shrink-0 text-slate-500 hover:text-gold-300 transition-colors"
                         aria-label="Expandir carta"
                       >
-                        <ZoomIn size={11} />
+                        <ZoomIn size={10} />
                       </button>
                     </div>
                   )}
@@ -246,7 +255,7 @@ export function Apertura() {
                       }`}
                     >
                       <Card
-                        size="sm"
+                        size={cardSize}
                         rarity={card.rarity}
                         name={card.name}
                         type={card.type}
