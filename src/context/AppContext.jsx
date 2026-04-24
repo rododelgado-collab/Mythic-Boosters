@@ -19,6 +19,10 @@ export function AppProvider({ children }) {
   const [addresses, setAddresses] = useState([])
   const [activeAddressId, setActiveAddressId] = useState(null)
 
+  // — Tarjetas de pago —
+  const [paymentCards, setPaymentCards] = useState([])
+  const [activeCardId, setActiveCardId] = useState(null)
+
   // — Sets de Scryfall —
   const [sets, setSets] = useState([])
   const [setsLoading, setSetsLoading] = useState(false)
@@ -101,6 +105,24 @@ export function AppProvider({ children }) {
     setCollection((c) => c.filter((card) => !cardIds.includes(card.instanceId)))
   }, [])
 
+  // — Tarjetas de pago —
+  const addPaymentCard = useCallback((card) => {
+    const newCard = { ...card, id: crypto.randomUUID() }
+    setPaymentCards((prev) => [...prev, newCard])
+    setActiveCardId((prev) => prev ?? newCard.id)
+    return newCard
+  }, [])
+
+  const removePaymentCard = useCallback((id) => {
+    setPaymentCards((prev) => {
+      const remaining = prev.filter((c) => c.id !== id)
+      setActiveCardId((cur) => (cur === id ? (remaining[0]?.id ?? null) : cur))
+      return remaining
+    })
+  }, [])
+
+  const selectPaymentCard = useCallback((id) => setActiveCardId(id), [])
+
   // — Pedidos —
   const addOrder = useCallback((order) => {
     setOrders((prev) => [{ ...order, id: crypto.randomUUID(), date: new Date().toISOString() }, ...prev])
@@ -147,6 +169,11 @@ export function AppProvider({ children }) {
     collection,
     orders,
     addOrder,
+    paymentCards,
+    activeCardId,
+    addPaymentCard,
+    removePaymentCard,
+    selectPaymentCard,
     savedAddress,
     addresses,
     activeAddressId,

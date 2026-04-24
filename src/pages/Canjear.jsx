@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Package, MapPin, Check, X, Plus } from 'lucide-react'
 import { Button } from '../components/Button'
@@ -10,24 +10,29 @@ export function Canjear() {
   const location = useLocation()
   const navigate = useNavigate()
   const { addresses, activeAddressId, selectAddress, addAddress, removeCards, addOrder } = useApp()
-  const selectedCards = location.state?.selectedCards || []
+  const initialCards = location.state?.selectedCards || []
+  const mountedWithCards = useRef(initialCards.length > 0)
 
+  const [cards, setCards] = useState(initialCards)
   const [selectedAddressId, setSelectedAddressId] = useState(() => activeAddressId)
   const [showNewForm, setShowNewForm] = useState(false)
   const [newAddress, setNewAddress] = useState({ street: '', commune: '', city: '', region: '' })
   const [confirmed, setConfirmed] = useState(false)
 
   useEffect(() => {
-    if (selectedCards.length === 0) navigate('/perfil')
-  }, [selectedCards.length, navigate])
+    if (!mountedWithCards.current) navigate('/perfil')
+  }, [navigate])
 
-  if (selectedCards.length === 0) return null
+  if (!mountedWithCards.current) return null
+
+  const removeCard = (instanceId) => setCards((prev) => prev.filter((c) => c.instanceId !== instanceId))
 
   const addressToUse = showNewForm
     ? newAddress
     : addresses.find((a) => a.id === selectedAddressId)
 
   const handleConfirm = () => {
+    if (cards.length === 0) return
     let finalAddress = addressToUse
     if (showNewForm && newAddress.street) {
       const saved = addAddress(newAddress)
@@ -37,11 +42,11 @@ export function Canjear() {
       selectAddress(selectedAddressId)
     }
     addOrder({
-      cards: selectedCards,
+      cards,
       address: finalAddress,
       status: 'pending',
     })
-    const cardIds = selectedCards.map((c) => c.instanceId)
+    const cardIds = cards.map((c) => c.instanceId)
     removeCards(cardIds)
     setConfirmed(true)
     setTimeout(() => navigate('/perfil', { state: { tab: 'pedidos' } }), 2000)
@@ -57,7 +62,7 @@ export function Canjear() {
           <div>
             <h2 className="title-display text-2xl md:text-3xl">¡Pedido confirmado!</h2>
             <p className="text-slate-400 mt-2">
-              {selectedCards.length} carta{selectedCards.length > 1 ? 's' : ''} en camino a tu dirección
+              {cards.length} carta{cards.length > 1 ? 's' : ''} en camino a tu dirección
             </p>
           </div>
           <p className="text-sm text-slate-500">
@@ -80,24 +85,46 @@ export function Canjear() {
         <div className="grid md:grid-cols-2 gap-8">
           {/* Left: Cartas seleccionadas */}
           <div className="flex flex-col gap-4">
-            <h2 className="title-display text-xl">Cartas a canjear ({selectedCards.length})</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {selectedCards.map((card) => (
-                <Card
-                  key={card.instanceId}
-                  size="xs"
-                  rarity={card.rarity}
-                  name={card.name}
-                  type={card.type}
-                  cost={card.cost}
-                  power={card.power}
-                  toughness={card.toughness}
-                  rulesText={card.rulesText}
-                  art={card.art}
-                  imageUri={card.imageUri}
-                />
-              ))}
+            <div className="flex items-baseline justify-between">
+              <h2 className="title-display text-xl">Cartas a canjear ({cards.length})</h2>
+              <span className="font-mono text-[10px] text-slate-500 tracking-wider">TAP PARA QUITAR</span>
             </div>
+            {cards.length === 0 ? (
+              <div className="card p-6 text-center text-slate-500 text-sm">
+                No hay cartas seleccionadas
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {cards.map((card) => (
+                  <div key={card.instanceId} className="flex flex-col items-center gap-1.5">
+                    <div className="relative w-fit">
+                      <Card
+                        size="xs"
+                        rarity={card.rarity}
+                        name={card.name}
+                        type={card.type}
+                        cost={card.cost}
+                        power={card.power}
+                        toughness={card.toughness}
+                        rulesText={card.rulesText}
+                        art={card.art}
+                        imageUri={card.imageUri}
+                      />
+                      <button
+                        onClick={() => removeCard(card.instanceId)}
+                        className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 flex items-center justify-center text-white hover:bg-red-400 transition-colors z-10"
+                        aria-label="Quitar carta"
+                      >
+                        <X size={10} />
+                      </button>
+                    </div>
+                    <span className="font-mono text-[10px] text-gold-300">
+                      ${card.marketPrice.toLocaleString('es-CL')}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Right: Dirección */}
@@ -167,7 +194,7 @@ export function Canjear() {
             <div className="card p-4 bg-void space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-slate-400">Cartas</span>
-                <span className="text-slate-100">{selectedCards.length}</span>
+                <span className="text-slate-100">{cards.length}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-slate-400">Envío</span>
@@ -185,7 +212,7 @@ export function Canjear() {
                 size="lg"
                 icon={<Package size={18} />}
                 onClick={handleConfirm}
-                disabled={showNewForm ? (!newAddress.street || !newAddress.commune || !newAddress.city || !newAddress.region) : !selectedAddressId}
+                disabled={cards.length === 0 || (showNewForm ? (!newAddress.street || !newAddress.commune || !newAddress.city || !newAddress.region) : !selectedAddressId)}
                 className="w-full"
               >
                 Confirmar pedido

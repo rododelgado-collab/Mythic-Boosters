@@ -508,9 +508,7 @@ function CardBrandBadge({ brand }) {
 }
 
 function SaldoTab() {
-  const { balance, addBalance } = useApp()
-  const [savedCards, setSavedCards] = useState([])
-  const [selectedCard, setSelectedCard] = useState(null)
+  const { balance, addBalance, paymentCards, activeCardId, addPaymentCard, removePaymentCard, selectPaymentCard } = useApp()
   const [showCardForm, setShowCardForm] = useState(false)
   const [custom, setCustom] = useState('')
   const [added, setAdded] = useState(null)
@@ -550,26 +548,22 @@ function SaldoTab() {
     const errs = validateCard()
     if (Object.keys(errs).length > 0) { setCardErrors(errs); return }
     const digits = cardForm.number.replace(/\s/g, '')
-    const newCard = {
-      id: crypto.randomUUID(),
+    addPaymentCard({
       last4: digits.slice(-4),
       name: cardForm.name.trim(),
       expiry: cardForm.expiry,
       brand: cardBrand(cardForm.number),
-    }
-    setSavedCards((prev) => [...prev, newCard])
-    setSelectedCard(newCard.id)
+    })
     setCardForm({ number: '', name: '', expiry: '', cvv: '' })
     setCardErrors({})
     setShowCardForm(false)
   }
 
   const handleRemoveCard = (id) => {
-    setSavedCards((prev) => prev.filter((c) => c.id !== id))
-    if (selectedCard === id) setSelectedCard(null)
+    removePaymentCard(id)
   }
 
-  const canRecharge = savedCards.length > 0 && selectedCard
+  const canRecharge = paymentCards.length > 0 && activeCardId
 
   return (
     <div className="flex flex-col gap-6 max-w-lg">
@@ -601,7 +595,7 @@ function SaldoTab() {
           )}
         </div>
 
-        {savedCards.length === 0 && !showCardForm && (
+        {paymentCards.length === 0 && !showCardForm && (
           <div className="card p-6 flex flex-col items-center gap-3 text-center border-dashed">
             <CreditCard size={28} className="text-slate-600" />
             <p className="text-slate-500 text-sm">No tienes tarjetas guardadas</p>
@@ -614,19 +608,19 @@ function SaldoTab() {
           </div>
         )}
 
-        {savedCards.map((card) => (
+        {paymentCards.map((card) => (
           <div
             key={card.id}
-            onClick={() => setSelectedCard(card.id)}
+            onClick={() => selectPaymentCard(card.id)}
             className={`card p-4 flex items-center justify-between cursor-pointer transition-all ${
-              selectedCard === card.id ? 'border-gold-400/60 bg-gold-400/5' : 'hover:border-gold-400/30'
+              activeCardId === card.id ? 'border-gold-400/60 bg-gold-400/5' : 'hover:border-gold-400/30'
             }`}
           >
             <div className="flex items-center gap-3">
               <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                selectedCard === card.id ? 'border-gold-400 bg-gold-400' : 'border-slate-600'
+                activeCardId === card.id ? 'border-gold-400 bg-gold-400' : 'border-slate-600'
               }`}>
-                {selectedCard === card.id && <Check size={11} className="text-void" />}
+                {activeCardId === card.id && <Check size={11} className="text-void" />}
               </div>
               <CardBrandBadge brand={card.brand} />
               <div>
@@ -802,7 +796,7 @@ function SaldoTab() {
             {/* Detalle */}
             <div className="card bg-void p-4 space-y-2">
               {(() => {
-                const card = savedCards.find((c) => c.id === selectedCard)
+                const card = paymentCards.find((c) => c.id === activeCardId)
                 return card ? (
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-slate-400">Tarjeta</span>

@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Banknote, AlertTriangle, Check } from 'lucide-react'
+import { Banknote, AlertTriangle, Check, X } from 'lucide-react'
 import { Button } from '../components/Button'
 import { Card } from '../components/Card'
 import { useApp } from '../context/AppContext'
@@ -9,26 +9,31 @@ export function Vender() {
   const location = useLocation()
   const navigate = useNavigate()
   const { balance, addBalance, removeCards } = useApp()
-  const selectedCards = location.state?.selectedCards || []
+  const initialCards = location.state?.selectedCards || []
+  const mountedWithCards = useRef(initialCards.length > 0)
 
+  const [cards, setCards] = useState(initialCards)
   const [confirmed, setConfirmed] = useState(false)
   const [accepted, setAccepted] = useState(false)
 
   useEffect(() => {
-    if (selectedCards.length === 0) {
-      navigate('/perfil')
-    }
-  }, [selectedCards.length, navigate])
+    if (!mountedWithCards.current) navigate('/perfil')
+  }, [navigate])
 
-  if (selectedCards.length === 0) return null
+  if (!mountedWithCards.current) return null
 
-  const totalValue = selectedCards.reduce((sum, c) => sum + c.marketPrice, 0)
+  const removeCard = (instanceId) => {
+    setCards((prev) => prev.filter((c) => c.instanceId !== instanceId))
+    setAccepted(false)
+  }
+
+  const totalValue = cards.reduce((sum, c) => sum + c.marketPrice, 0)
   const commission = Math.round(totalValue * 0.14)
   const finalCredit = totalValue - commission
 
   const handleConfirm = () => {
-    if (!accepted) return
-    const cardIds = selectedCards.map((c) => c.instanceId)
+    if (!accepted || cards.length === 0) return
+    const cardIds = cards.map((c) => c.instanceId)
     removeCards(cardIds)
     addBalance(finalCredit)
     setConfirmed(true)
@@ -76,28 +81,46 @@ export function Vender() {
         <div className="grid md:grid-cols-2 gap-8">
           {/* Left: Cartas seleccionadas */}
           <div className="flex flex-col gap-4">
-            <h2 className="title-display text-xl">Cartas a vender ({selectedCards.length})</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {selectedCards.map((card) => (
-                <div key={card.instanceId} className="flex flex-col gap-2">
-                  <Card
-                    size="xs"
-                    rarity={card.rarity}
-                    name={card.name}
-                    type={card.type}
-                    cost={card.cost}
-                    power={card.power}
-                    toughness={card.toughness}
-                    rulesText={card.rulesText}
-                    art={card.art}
-                  imageUri={card.imageUri}
-                  />
-                  <span className="text-center font-mono text-[10px] text-gold-300">
-                    ${card.marketPrice.toLocaleString('es-CL')}
-                  </span>
-                </div>
-              ))}
+            <div className="flex items-baseline justify-between">
+              <h2 className="title-display text-xl">Cartas a vender ({cards.length})</h2>
+              <span className="font-mono text-[10px] text-slate-500 tracking-wider">TAP PARA QUITAR</span>
             </div>
+            {cards.length === 0 ? (
+              <div className="card p-6 text-center text-slate-500 text-sm">
+                No hay cartas seleccionadas
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {cards.map((card) => (
+                  <div key={card.instanceId} className="flex flex-col items-center gap-1.5">
+                    <div className="relative w-fit">
+                      <Card
+                        size="xs"
+                        rarity={card.rarity}
+                        name={card.name}
+                        type={card.type}
+                        cost={card.cost}
+                        power={card.power}
+                        toughness={card.toughness}
+                        rulesText={card.rulesText}
+                        art={card.art}
+                        imageUri={card.imageUri}
+                      />
+                      <button
+                        onClick={() => removeCard(card.instanceId)}
+                        className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 flex items-center justify-center text-white hover:bg-red-400 transition-colors z-10"
+                        aria-label="Quitar carta"
+                      >
+                        <X size={10} />
+                      </button>
+                    </div>
+                    <span className="font-mono text-[10px] text-gold-300">
+                      ${card.marketPrice.toLocaleString('es-CL')}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Right: Resumen y confirmación */}
