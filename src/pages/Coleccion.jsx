@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Package, Banknote, Check, Layers, ZoomIn } from 'lucide-react'
 import { Card } from '../components/Card'
@@ -10,6 +10,13 @@ export function Coleccion() {
   const { collection } = useApp()
   const navigate = useNavigate()
   const [selectedCards, setSelectedCards] = useState([])
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
+
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
 
   const allSelected = collection.length > 0 && selectedCards.length === collection.length
   const [zoomedCard, setZoomedCard] = useState(null)
@@ -120,7 +127,7 @@ export function Coleccion() {
         </div>
 
         {/* Grid de cartas */}
-        <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-3 md:gap-4">
+        <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-2 md:gap-4 place-items-center">
           {collection.map((card) => {
             const isSelected = selectedCards.includes(card.instanceId)
             return (
@@ -146,7 +153,7 @@ export function Coleccion() {
                     }`}
                   >
                     <Card
-                      size="sm"
+                      size={isMobile ? 'xs' : 'sm'}
                       rarity={card.rarity}
                       name={card.name}
                       type={card.type}
