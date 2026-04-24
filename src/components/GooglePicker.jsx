@@ -22,7 +22,7 @@ export function GooglePicker({ onSelect, onClose }) {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-[360px] overflow-hidden"
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-[90vw] sm:max-w-[360px] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Google */}

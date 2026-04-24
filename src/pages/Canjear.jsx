@@ -69,7 +69,7 @@ export function Canjear() {
   }
 
   return (
-    <div className="min-h-screen bg-void bg-radial-gold p-5 md:p-10">
+    <div className="min-h-screen bg-void bg-radial-gold p-5 md:p-10 pb-24 md:pb-10">
       <div className="max-w-6xl mx-auto flex flex-col gap-8">
         <div>
           <span className="eyebrow">✦ CANJEAR POR FÍSICO</span>
@@ -81,7 +81,7 @@ export function Canjear() {
           {/* Left: Cartas seleccionadas */}
           <div className="flex flex-col gap-4">
             <h2 className="title-display text-xl">Cartas a canjear ({selectedCards.length})</h2>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {selectedCards.map((card) => (
                 <Card
                   key={card.instanceId}
@@ -119,7 +119,7 @@ export function Canjear() {
                 <div className="card p-4 bg-void flex flex-col gap-3">
                   <Input label="CALLE Y NÚMERO" placeholder="Av. Providencia 1234, Depto 501"
                     value={newAddress.street} onChange={(e) => setNewAddress({ ...newAddress, street: e.target.value })} />
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <Input label="COMUNA" placeholder="Providencia"
                       value={newAddress.commune} onChange={(e) => setNewAddress({ ...newAddress, commune: e.target.value })} />
                     <Input label="CIUDAD" placeholder="Santiago"

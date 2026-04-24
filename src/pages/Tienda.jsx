@@ -54,7 +54,7 @@ export function Tienda() {
 
         {/* Loading */}
         {setsLoading && (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
             {[0, 1, 2].map((i) => (
               <div key={i} className="flex flex-col items-center gap-4 animate-pulse">
                 <div className="w-[240px] h-[320px] rounded-2xl bg-abyss border border-gold-400/10" />
@@ -81,7 +81,7 @@ export function Tienda() {
 
         {/* Sets */}
         {!setsLoading && !setsError && sets.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
             {sets.map((set) => (
               <div key={set.code} className="flex flex-col items-center gap-4">
                 <Pack
@@ -108,7 +108,7 @@ export function Tienda() {
             onClick={() => setSelectedSet(null)}
           >
             <div
-              className="card w-full max-w-md p-6 md:p-8 bg-abyss"
+              className="card w-full max-w-sm md:max-w-md p-5 md:p-8 bg-abyss"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex flex-col items-center text-center gap-4">

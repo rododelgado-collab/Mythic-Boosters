@@ -65,7 +65,7 @@ export function Vender() {
   }
 
   return (
-    <div className="min-h-screen bg-void bg-radial-gold p-5 md:p-10">
+    <div className="min-h-screen bg-void bg-radial-gold p-5 md:p-10 pb-24 md:pb-10">
       <div className="max-w-6xl mx-auto flex flex-col gap-8">
         <div>
           <span className="eyebrow">✦ VENDER POR CRÉDITO</span>
@@ -77,7 +77,7 @@ export function Vender() {
           {/* Left: Cartas seleccionadas */}
           <div className="flex flex-col gap-4">
             <h2 className="title-display text-xl">Cartas a vender ({selectedCards.length})</h2>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {selectedCards.map((card) => (
                 <div key={card.instanceId} className="flex flex-col gap-2">
                   <Card

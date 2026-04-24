@@ -26,7 +26,7 @@ export function CardZoom({ card, onClose }) {
             src={card.imageUri}
             alt={card.name}
             className="rounded-2xl shadow-2xl"
-            style={{ maxHeight: '78vh', maxWidth: '340px', width: '100%' }}
+            style={{ maxHeight: '78vh', maxWidth: 'min(340px, calc(100vw - 40px))', width: '100%' }}
           />
         ) : (
           <Card

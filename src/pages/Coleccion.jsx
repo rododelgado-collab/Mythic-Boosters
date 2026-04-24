@@ -126,7 +126,7 @@ export function Coleccion() {
             return (
               <div key={card.instanceId} className="flex flex-col items-center">
                 {/* Nombre + lupa */}
-                <div className="flex items-center gap-1 mb-1.5 w-[140px] justify-center">
+                <div className="flex items-center gap-1 mb-1.5 w-[90px] md:w-[140px] justify-center">
                   <span className="font-display text-[10px] text-slate-300 truncate">{card.name}</span>
                   <button
                     onClick={() => setZoomedCard(card)}

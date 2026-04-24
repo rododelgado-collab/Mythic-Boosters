@@ -82,7 +82,7 @@ function PerfilTab({ onTabChange }) {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-3 md:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-6">
         <StatBox label="SALDO" value={`$${balance.toLocaleString('es-CL')}`} accent="text-gold-200" />
         <StatBox
           label="SOBRES SIN ABRIR"
@@ -105,7 +105,7 @@ function PerfilTab({ onTabChange }) {
             <h2 className="title-display text-2xl md:text-3xl">Sobres sin abrir</h2>
             <span className="badge badge-gold">{unopenedPacks.length} pendientes</span>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {unopenedPacks.map((pack) => (
               <div key={pack.id} className="flex flex-col items-center gap-3">
                 <div className="relative">
@@ -165,7 +165,7 @@ function PerfilTab({ onTabChange }) {
           <div className="grid grid-cols-3 md:grid-cols-6 gap-3 md:gap-4">
             {recentCards.map((card) => (
               <div key={card.instanceId} className="flex flex-col items-center">
-                <div className="flex items-center gap-1 mb-1.5 w-[140px] justify-center">
+                <div className="flex items-center gap-1 mb-1.5 w-[90px] md:w-[140px] justify-center">
                   <span className="font-display text-[10px] text-slate-300 truncate">{card.name}</span>
                   <button
                     onClick={() => setZoomedCard(card)}
@@ -289,7 +289,7 @@ function ColeccionTab() {
           const isSelected = selectedCards.includes(card.instanceId)
           return (
             <div key={card.instanceId} className="flex flex-col items-center">
-              <div className="flex items-center gap-1 mb-1.5 w-[140px] justify-center">
+              <div className="flex items-center gap-1 mb-1.5 w-[90px] md:w-[140px] justify-center">
                 <span className="font-display text-[10px] text-slate-300 truncate">{card.name}</span>
                 <button onClick={() => setZoomedCard(card)}
                   className="flex-shrink-0 text-slate-500 hover:text-gold-300 transition-colors">
@@ -888,7 +888,7 @@ function DireccionTab() {
         <form onSubmit={handleSave} className="card p-6 bg-abyss flex flex-col gap-4">
           <span className="font-mono text-[10px] text-slate-500 tracking-wider">NUEVA DIRECCIÓN</span>
           <Input label="CALLE Y NÚMERO" placeholder="Av. Providencia 1234, Depto 501" {...field('street')} />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Input label="COMUNA" placeholder="Providencia" {...field('commune')} />
             <Input label="CIUDAD" placeholder="Santiago" {...field('city')} />
           </div>

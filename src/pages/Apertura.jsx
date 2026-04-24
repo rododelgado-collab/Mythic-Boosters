@@ -144,7 +144,7 @@ export function Apertura() {
   if (phase === 'revealing') {
     return (
       <div className="fixed inset-0 z-50 bg-void bg-radial-gold overflow-y-auto">
-        <div className="min-h-screen p-5 md:p-10 flex flex-col gap-6">
+        <div className="min-h-screen p-5 md:p-10 pb-24 md:pb-10 flex flex-col gap-6">
 
           {/* Cabecera + barra de acciones */}
           <div className="flex flex-col gap-4">
@@ -219,7 +219,7 @@ export function Apertura() {
                 >
                   {/* Nombre + lupa (solo cuando está revelada) */}
                   {isRevealed && (
-                    <div className="flex items-center gap-1 mb-1.5 w-[140px] justify-center">
+                    <div className="flex items-center gap-1 mb-1.5 w-[90px] md:w-[140px] justify-center">
                       <span className="font-display text-[10px] text-slate-300 truncate">{card.name}</span>
                       <button
                         onClick={() => setZoomedCard(card)}

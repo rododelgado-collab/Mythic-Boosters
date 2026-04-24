@@ -23,7 +23,7 @@ export function Home() {
   return (
     <div className="bg-radial-gold">
       <section className="px-5 md:px-16 py-12 md:py-20">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 md:gap-16 items-center">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8 md:gap-16 items-center">
           <div className="flex flex-col gap-6">
             <span className="eyebrow">✦ EDICIÓN ARCANA · YA DISPONIBLE</span>
 
@@ -49,7 +49,8 @@ export function Home() {
           </div>
 
           <div className="flex justify-center md:justify-end">
-            <Pack size="xl" set="ARCANA" price={4990} />
+            <Pack size="lg" set="ARCANA" price={4990} className="md:hidden" />
+            <Pack size="xl" set="ARCANA" price={4990} className="hidden md:block" />
           </div>
         </div>
       </section>

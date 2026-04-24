@@ -111,7 +111,7 @@ export function Navbar() {
 
       {/* Mobile top bar */}
       <nav className="md:hidden fixed top-0 inset-x-0 z-40 h-14 flex items-center justify-between px-5 bg-void border-b border-gold-400/10">
-        <Link to="/" className="font-display font-bold text-gold-300 tracking-[0.2em] text-sm">
+        <Link to="/" className="font-display font-bold text-gold-300 tracking-[0.2em] text-base">
           MYTHIC
         </Link>
         {isAuthenticated ? (
@@ -183,7 +183,7 @@ function TabItem({ to, icon, label, end = false }) {
       to={to}
       end={end}
       className={({ isActive }) =>
-        `flex flex-col items-center gap-1 transition-colors ${
+        `flex flex-col items-center gap-1 px-4 py-1 transition-colors ${
           isActive ? 'text-gold-300' : 'text-slate-500'
         }`
       }
