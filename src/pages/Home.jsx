@@ -36,7 +36,7 @@ export function Home() {
               por envío físico o conviértelas en saldo al instante.
             </p>
 
-            <div className="flex flex-wrap gap-3 mt-4">
+            <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-4">
               <Link to="/tienda">
                 <Button variant="primary" size="lg" icon={<Sparkles size={16} />}>
                   Ver sobres
