@@ -133,14 +133,14 @@ export function Coleccion() {
             return (
               <div key={card.instanceId} className="flex flex-col items-center">
                 {/* Nombre + lupa */}
-                <div className="flex items-center gap-1 mb-1.5 w-[90px] md:w-[140px] justify-center">
-                  <span className="font-display text-[10px] text-slate-300 truncate">{card.name}</span>
+                <div className="flex items-center gap-0.5 mb-1 w-[90px] justify-center">
+                  <span className="font-display text-[9px] text-slate-300 truncate">{card.name}</span>
                   <button
                     onClick={() => setZoomedCard(card)}
                     className="flex-shrink-0 text-slate-500 hover:text-gold-300 transition-colors"
                     aria-label="Expandir carta"
                   >
-                    <ZoomIn size={11} />
+                    <ZoomIn size={10} />
                   </button>
                 </div>
 
